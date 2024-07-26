@@ -1,14 +1,14 @@
 # OpenBSD 7.5 router with VLANs
 
-I used to run pfSense on my router but the company behind it started being very anti-community and almost stopped supporting their CE version. So I faced a dilemma. Migrate to OpnSense, VyOS or something else? I heard a lot of good things about OpenBSD so I thought to myself "why not"? I especially like OpenBSD commitment to high security standards and that's exactly what's needed for a router and a firewall that protects your home network. 
+I run pfSense on my router but the company behind it has started being very anti-community and almost stopped supporting their CE  version. So I faced a dilemma. Migrate to OpnSense, VyOS, or something  else? I heard many good things about OpenBSD so I thought to myself  "Why not"? I especially like OpenBSD's commitment to high security standards and that's exactly what's needed for a router and a firewall that protects your home network.
 
 ![OpenBSD Router - Neofetch output](images/neofetch.png "OpenBSD Router - Neofetch output")
 
-_This is my first configuration for OpenBSD based router. Mistakes are expected. You're welcome to open issues or PRs to help add features or additional configurations. This guide will be quarterly updated or when I add something useful to it._
+_This is my first configuration for an OpenBSD-based router. Mistakes are expected. You're welcome to open issues or PRs to help add features or additional configurations. This guide will be quarterly updated or when I add something useful to it._
 
 ## Hardware used
 
-[OpenBSD](https://www.openbsd.org/) supports a lot of old hardware so just pick something. I picked a Supermicro server with the following specifications:
+[OpenBSD](https://www.openbsd.org/) supports a lot of old hardware so pick something. I chose a Supermicro server with the following specifications:
 
 - Motherboard: [Supermicro X11SSH-LN4F](https://www.supermicro.com/en/products/motherboard/x11ssh-ln4f)
 - Processor: Intel i3-7100 @ 3.90 Ghz
@@ -17,7 +17,7 @@ _This is my first configuration for OpenBSD based router. Mistakes are expected.
 
 ## My network 
 
-### I segregate my network with following VLANs
+### I segregate my network with the following VLANs
 
 - LAN - only network hardware devices
 - VLAN 10 - admin management devices
@@ -46,21 +46,21 @@ _This is my first configuration for OpenBSD based router. Mistakes are expected.
 ### Firewall rules:
 
 - WAN has no access from outside (you can't ping or SSH into a router)
-- LAN can access all VLANs and internet
-- VLAN 10 can access all VLANs, LAN and internet
-- VLAN 20 subnet is 10.20.0.0/24 can access VLAN 42, VLAN 50 and internet
-- VLAN 30 can access all VLANs, LAN and internet
-- VLAN 40 can access all VLANs, LAN and internet
-- VLAN 41 can't access no VLANs only internet
-- VLAN 42 can't access no VLANs only internet
-- VLAN 50 can't access no VLANs or internet
-- VLAN 60 can't access no VLANs or internet
-- VLAN 70 can't access no VLANs only internet
+- LAN can access all VLANs and the internet
+- VLAN 10 can access all VLANs, LAN, and internet
+- VLAN 20 subnet is 10.20.0.0/24 and can access VLAN 42, VLAN 50, and the internet
+- VLAN 30 can access all VLANs, LAN, and internet
+- VLAN 40 can access all VLANs, LAN, and internet
+- VLAN 41 can't access any VLANs only the internet
+- VLAN 42 can't access any VLANs only the internet
+- VLAN 50 can't access any VLANs or the internet
+- VLAN 60 can't access any VLANs or the internet
+- VLAN 70 can't access any VLANs only the internet
 - Open port 32400 to be reached from the internet to local IP 10.20.0.11
 
 ## Guide
 
-### 1. [Install OpenBSD](https://www.openbsdhandbook.com/installation/) to your hardware of choice. I suggest skipping installing following sets (not needed for router and firewall): 
+### 1. [Install OpenBSD](https://www.openbsdhandbook.com/installation/) to your hardware of choice. I suggest skipping installing the following sets (not needed for router and firewall): 
 
 ```[X] bsd           [ ] comp7X.tgz    [ ] xbase7X.tgz   [ ] xserv7X.tgz
     [X] bsd.rd        [X] man7X.tgz     [ ] xshare7X.tgz
@@ -69,7 +69,7 @@ _This is my first configuration for OpenBSD based router. Mistakes are expected.
 
 ### 2.  Configure network interfaces
 
-Check which network interfaces you have with `ifconfig`. I have `em0`, `em1`, `em2` and `em3` but I'll be using only `em0` for WAN and `em1` for LAN. I'll be writing from the perspective of my configuration.
+Check which network interfaces you have with `ifconfig`. I have `em0`, `em1`, `em2`, and `em3` but I'll be using only `em0` for WAN and `em1` for LAN. I'll be writing from the perspective of my configuration.
 
 #### Configure your WAN interface
 
@@ -253,7 +253,7 @@ pass in quick on $int_if from { <lan> <vlan10> <vlan20> <vlan30> <vlan40> <vlan4
 
 # WAN rules
 pass out on $ext_if proto { tcp udp icmp } all modulate state
-# pass in on $ext_if proto tcp to ($ext_if) port ssh # Needed only when setuping within the existing network
+# pass in on $ext_if proto tcp to ($ext_if) port ssh # Needed only when set up within the existing network
 pass in on $ext_if inet proto icmp icmp-type echoreq
 
 # LAN and VLAN outbound rules
@@ -284,7 +284,7 @@ pass log (all) quick on $ext_if
 
 ## Future
 
-In the future I'll add a VPN guide on how to connect to [Mullvad VPN](https://mullvad.net/en) and route it through an entire VLAN. I'll also add a guide on how to configure Wireguard to safely connect back home when needed.
+In the future, I'll add a VPN guide on how to connect to [Mullvad VPN](https://mullvad.net/en) and route it through an entire VLAN. I'll also add a guide on how to configure Wireguard to safely connect back home when needed.
 
 ## Sources
 
